@@ -1,16 +1,23 @@
 package com.qfang.examples.ms.product.core.restful;
 
-import com.qfang.examples.ms.product.core.ProductServiceBaseTests;
+import com.google.gson.JsonObject;
+import com.qfang.examples.ms.product.api.model.User;
+import com.qfang.examples.ms.product.core.ProductServiceApplication;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,7 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @date: 2018-08-05
  * @since: 1.0
  */
-public class UserApiTests extends ProductServiceBaseTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = ProductServiceApplication.class)  // spring boot 启动类
+public class UserApiTests {
 
     @Autowired
     private UserApi userApi;
@@ -32,25 +41,53 @@ public class UserApiTests extends ProductServiceBaseTests {
 
     @Test
     public void findByUsernameTest() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/api/user/findByUsername").param("username", "lisi"))
+        mockMvc.perform(get("/api/user/findByUsername").param("username", "lisi"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse();
-        System.out.println(response.getContentAsString());
+                .andReturn();
     }
 
     @Test
     public void listTest() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/api/user/list"))
+        mockMvc.perform(
+                get("/api/user/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("username", "zhangsan")
+                        .param("currentPage", "1")
+                        .param("pageSize", "10")
+        )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse();
-        System.out.println(response.getContentAsString());
+                .andReturn();
     }
 
+    @Test
+    public void insert() throws Exception {
+        User user = new User();
+        user.setId(100L);
+        user.setUsername("wangwu");
+        user.setName("王五");
+        user.setAge(11);
+        user.setBalance(new BigDecimal("55.55"));
+
+        JsonObject userJsonObject = new JsonObject();
+        userJsonObject.addProperty("id", 100L);
+        userJsonObject.addProperty("name", "王五");
+        userJsonObject.addProperty("age", 11);
+        userJsonObject.addProperty("balance", new BigDecimal("55.55"));
+        String usrJson = userJsonObject.toString();
+
+        mockMvc.perform(
+                post("/api/user/insert")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(usrJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
 
 }

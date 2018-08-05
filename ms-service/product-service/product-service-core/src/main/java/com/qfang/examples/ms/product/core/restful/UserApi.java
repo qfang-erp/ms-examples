@@ -5,7 +5,6 @@ import com.qfang.examples.ms.product.core.service.UserService;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,10 +36,9 @@ public class UserApi {
         return userService.listUser();
     }
 
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/user/insert", method = RequestMethod.POST)
     public void insert(@RequestBody User user) {
         userService.saveUser(user);
     }
-
 
 }
