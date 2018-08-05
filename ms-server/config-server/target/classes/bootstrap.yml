@@ -1,0 +1,25 @@
+server:
+  port: 36710
+spring:
+  application:
+    name: server-config
+  log:
+    dir: d:/logs
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:qfang-erp/spring-cloud-config.git
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:36610/eureka/
+
+logging:
+  file: classpath:/logback-spring.xml
+

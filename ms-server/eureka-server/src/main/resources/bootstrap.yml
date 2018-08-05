@@ -1,0 +1,23 @@
+server:
+  port: 36610
+spring:
+  application:
+    name: server-eureka
+  log:
+    dir: d:/logs
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://127.0.0.1:36610/eureka/
+
+logging:
+  file: classpath:/logback-spring.xml
+
