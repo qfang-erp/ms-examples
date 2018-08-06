@@ -38,6 +38,9 @@ public class UserApi {
 
     @RequestMapping(value = "/api/user/insert", method = RequestMethod.POST)
     public void insert(@RequestBody User user) {
+        if(user.getId() != null && user.getId() <= 0)
+            user.setId(null);
+
         userService.saveUser(user);
     }
 

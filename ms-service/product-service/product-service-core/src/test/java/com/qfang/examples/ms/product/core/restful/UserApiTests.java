@@ -1,8 +1,8 @@
 package com.qfang.examples.ms.product.core.restful;
 
-import com.google.gson.JsonObject;
 import com.qfang.examples.ms.product.api.model.User;
 import com.qfang.examples.ms.product.core.ProductServiceApplication;
+import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +49,27 @@ public class UserApiTests {
     }
 
     @Test
+    public void insert() throws Exception {
+        User user = new User();
+        user.setUsername("wangwu");
+        user.setName("王五");
+        user.setAge(11);
+        user.setBalance(new BigDecimal("55.55"));
+
+        JSONObject userJsonObject = JSONObject.fromObject(user);
+        String usrJson = userJsonObject.toString();
+
+        mockMvc.perform(
+                post("/api/user/insert")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(usrJson)
+        )
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+    }
+
+    @Test
     public void listTest() throws Exception {
         mockMvc.perform(
                 get("/api/user/list")
@@ -56,33 +77,6 @@ public class UserApiTests {
                         .param("username", "zhangsan")
                         .param("currentPage", "1")
                         .param("pageSize", "10")
-        )
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-    }
-
-    @Test
-    public void insert() throws Exception {
-        User user = new User();
-        user.setId(100L);
-        user.setUsername("wangwu");
-        user.setName("王五");
-        user.setAge(11);
-        user.setBalance(new BigDecimal("55.55"));
-
-        JsonObject userJsonObject = new JsonObject();
-        userJsonObject.addProperty("id", 100L);
-        userJsonObject.addProperty("name", "王五");
-        userJsonObject.addProperty("age", 11);
-        userJsonObject.addProperty("balance", new BigDecimal("55.55"));
-        String usrJson = userJsonObject.toString();
-
-        mockMvc.perform(
-                post("/api/user/insert")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(usrJson)
         )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
